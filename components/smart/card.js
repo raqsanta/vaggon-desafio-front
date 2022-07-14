@@ -1,3 +1,4 @@
+import Link from "next/link"
 
 export default function SmartCard(props) {
 
@@ -20,7 +21,7 @@ export default function SmartCard(props) {
                 <h6 className="card-subtitle mb-2 text-muted">Iniciado em {props.currentCard.beginsdate}</h6>
                 <h6 className="card-subtitle mb-2 text-muted">Encerrado em {props.currentCard.expiresdate}</h6>
                 <p className="card-text">{props.currentCard.description}</p>
-                <a href="#" className="card-link">Editar</a>
+                <Link href={"/activity/edit/"+props.currentCard.id} className="card-link">Editar</Link>
             </div>
         </div>
     )

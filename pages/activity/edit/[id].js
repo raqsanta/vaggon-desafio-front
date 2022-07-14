@@ -2,14 +2,18 @@
 import { motion } from 'framer-motion'
 import Head from 'next/head'
 import DatePicker from 'react-datepicker'
-import styles from '../../styles/Home.module.css'
+import styles from '../../../styles/Home.module.css'
 import "react-datepicker/dist/react-datepicker.css"
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import axios from 'axios'
-import AuthContext from '../../context'
+import AuthContext from '../../../context'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
-export default function Add() {
+export default function Edit() {
+
+    const router = useRouter()
+    const { id } = router.query
 
     const { token } = useContext(AuthContext)
     const [status, setStatus] = useState("Pending");
@@ -19,31 +23,71 @@ export default function Add() {
         description: "",
         beginsdate: "",
         expiresdate: "",
-        status: status,
+        id: id
     })
 
-    function submitForm() {
+    useEffect(() => {
 
-        console.log(event)
+        if(!id) return
 
-        axios.post('http://localhost:8000/main/create-activity', event, {
+        axios.get('http://localhost:8000/main/get-activity/'+id, {
             headers: {
                 "Content-Type": "application/json",
                 "x-access-token": token
             }
         }).then((response) => {
+
+            console.log(response)
+
             if (response.data.auth == false) {
                 return
             }
+
+            setEvent(
+                {
+                    id: id,
+                    name: response.data.data.name,
+                    description: response.data.data.description,
+                    beginsdate: new Date(response.data.data.beginsdate),
+                    expiresdate: new Date(response.data.data.expiresdate),
+                }
+            )
+
+            setStatus(response.data.data.status)
+
+            document.getElementById('title').value = response.data.data.name
+            document.getElementById('description').value = response.data.data.description
+            document.getElementById('date-01').value = new Date(response.data.data.beginsdate)
+            document.getElementById('date-02').value = new Date(response.data.data.expiresdate)
+            document.getElementById('status').value = response.data.data.status
 
         }).catch((err) => {
             console.log(err)
         })
 
+    }, [id])
+
+    function submitForm() {
+
+        console.log(status)
+
+         axios.post('http://localhost:8000/main/edit-activity', {...event,status}, {
+             headers: {
+                 "Content-Type": "application/json",
+                 "x-access-token": token
+             }
+         }).then((response) => {
+             if (response.data.auth == false) {
+                 return
+             }
+
+         }).catch((err) => {
+             console.log(err)
+         })
+
     }
 
     function changeStatus(e) {
-        console.log(e.target.value)
         setStatus(e.target.value);
     }
 
@@ -74,7 +118,8 @@ export default function Add() {
             <main className={styles.main}>
 
                 <center>
-                    <h5>Add a new date</h5>
+                    <h5>Edit a date</h5>
+                    <h6>{id}</h6>
                     <br />
                     <div className="form-floating mb-3 2-">
                         <input id="title" className="form-control" type="text" placeholder="Add title" onChange={(name) => setEvent({ ...event, name: name.target.value })} />
@@ -84,9 +129,9 @@ export default function Add() {
                         <input id="description" className="form-control" type="text" placeholder="Add desc" onChange={(description) => setEvent({ ...event, description: description.target.value })} />
                         <label htmlFor="description">Description</label>
                     </div>
-                    <DatePicker className="form-control mb-3" placeholderText="Start date" selected={event.beginsdate} onChange={(beginsdate) => setEvent({ ...event, beginsdate })} />
+                    <DatePicker id="date-01" className="form-control mb-3" placeholderText="Start date" selected={event.beginsdate} onChange={(beginsdate) => setEvent({ ...event, beginsdate })} />
                     <br />
-                    <DatePicker className="form-control mb-3" placeholderText="End date" selected={event.expiresdate} onChange={(expiresdate) => setEvent({ ...event, expiresdate })} />
+                    <DatePicker id="date-02" className="form-control mb-3" placeholderText="End date" selected={event.expiresdate} onChange={(expiresdate) => setEvent({ ...event, expiresdate })} />
                     <br />
                     <div className="form-floating mb-3">
                         <select value={status} onChange={changeStatus} className="form-select" id="status" aria-label="Floating select">
@@ -96,7 +141,7 @@ export default function Add() {
                         </select>
                         <label htmlFor="status">Status</label>
                     </div>
-                    <button onClick={submitForm} className="btn btn-primary w-100 mt-3">Finalizar</button>
+                    <button onClick={submitForm} className="btn btn-primary w-100 mt-3">Editar</button>
                 </center>
 
             </main>

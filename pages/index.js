@@ -46,9 +46,8 @@ const events = [
 ]
 
 export default function Home() {
-  //talvez vc precise se autenticar
 
-  const [allEvents, setAllEvents] = useState()
+  const [allEvents, setAllEvents] = useState([])
   const { token, setToken } = useContext(AuthContext)
 
   useEffect(() => {
@@ -58,12 +57,22 @@ export default function Home() {
         "Content-Type": "application/json",
         "x-access-token": token
       }
-    }).then((response) => {
+    }).then(async (response) => {
       if (response.data.auth == false) {
         return
       }
-      
-      setAllEvents([response.data.data])
+
+      const allActivities = response.data.data
+
+      const result = []
+
+      await allActivities.forEach((element) => {
+        element.beginsdate = new Date(element.beginsdate)
+        element.expiresdate = new Date(element.expiresdate)
+        result.push(element)
+      })
+
+      setAllEvents(result)
 
     })
 
@@ -109,9 +118,10 @@ export default function Home() {
           setCurrentCard({
             name: e.name,
             description: e.description,
-            beginsdate: e.beginsdate,
-            expiresdate: e.expiresdate,
-            status: e.status
+            beginsdate: e.beginsdate.toDateString(),
+            expiresdate: e.expiresdate.toDateString(),
+            status: e.status,
+            id: e.id
           })
 
         }} localizer={localizer} events={allEvents}

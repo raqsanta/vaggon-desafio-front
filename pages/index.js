@@ -1,16 +1,55 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-import Calendar from 'react-calendar';
-import { useState } from 'react';
-import 'react-calendar/dist/Calendar.css';
+import { Calendar, dateFnsLocalizer } from 'react-big-calendar'
+import format from "date-fns/format"
+import parse from "date-fns/parse"
+import startOfWeek from "date-fns/startOfWeek"
+import getDay from "date-fns/getDay"
 import { motion } from 'framer-motion'
+import DatePicker from 'react-datepicker'
+import "react-datepicker/dist/react-datepicker.css"
+import "react-big-calendar/lib/css/react-big-calendar.css"
+import { useState } from 'react'
+
+const locales = {
+  "pt-BR": require("date-fns/locale/pt-BR")
+}
+const localizer = dateFnsLocalizer({
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+  locales
+})
+
+const events = [
+  {
+    title: "Teste",
+    allDay: true,
+    start: new Date(2022, 6, 31),
+    end: new Date(2022, 6, 31)
+  },
+  {
+    title: "Casa Piu",
+    allDay: true,
+    start: new Date(2022, 7, 1),
+    end: new Date(2022, 7, 3)
+  },
+]
 
 export default function Home() {
-
   //talvez vc precise se autenticar
 
-  const [value, onChange] = useState(new Date());
+  const [newEvent, setNewEvent] = useState({
+    title: "", allDay: true, start: "", end: ""
+  })
+
+  const [allEvents, setAllEvents] = useState(events)
+
+  function handleAddEvent() {
+    setAllEvents([...allEvents, newEvent])
+  }
 
   return (
     <motion.div
@@ -28,7 +67,23 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <Calendar selectRange={true} className={styles.main_calendar + " shadow"} locale="pt-BR" onChange={onChange} onClickDay={(e)=>{console.log(e)}} />
+        
+        <center>
+        <h5>Add a new date</h5>
+        <br />
+        <input type="text" placeholder="Add title" value={newEvent.title} onChange={(e)=>setNewEvent({...newEvent, title: e.target.value})} />
+        <DatePicker placeholderText="Start date" selected={newEvent.start} onChange={(start)=>setNewEvent({...newEvent, start})} />
+        <br />
+        <DatePicker placeholderText="End date" selected={newEvent.end} onChange={(end)=>setNewEvent({...newEvent, end})} />
+        <br />
+        <button className="mb-5" onClick={handleAddEvent}>Finalizar</button>
+        </center>
+
+        <br />
+        <Calendar localizer={localizer} events={allEvents}
+          startAccessor="start" endAccessor="end"
+          style={{ height: 500, width: "100%", margin: "50px" }}
+        />
       </main>
 
     </motion.div>

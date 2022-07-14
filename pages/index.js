@@ -10,8 +10,12 @@ import { motion } from 'framer-motion'
 import DatePicker from 'react-datepicker'
 import "react-datepicker/dist/react-datepicker.css"
 import "react-big-calendar/lib/css/react-big-calendar.css"
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import SmartCard from '../components/smart/card'
+import Router from 'next/router'
+import AuthContext from '../context'
+import Link from 'next/link'
+import axios from 'axios'
 
 const locales = {
   "pt-BR": require("date-fns/locale/pt-BR")
@@ -26,30 +30,60 @@ const localizer = dateFnsLocalizer({
 
 const events = [
   {
-    title: "Teste",
-    allDay: true,
-    start: new Date(2022, 6, 31),
-    end: new Date(2022, 6, 31)
+    name: "Assistir filme",
+    description: "Vou assistir vários filmes nesses dias",
+    beginsdate: new Date(2022, 6, 31),
+    expiresdate: new Date(2022, 6, 31),
+    status: "Published"
   },
   {
-    title: "Casa Piu",
-    allDay: true,
-    start: new Date(2022, 7, 1),
-    end: new Date(2022, 7, 3)
+    name: "Casa Piu",
+    description: "Vou comprar muitos sapato",
+    beginsdate: new Date(2022, 6, 1),
+    expiresdate: new Date(2022, 6, 5),
+    status: "Published"
   },
 ]
 
 export default function Home() {
   //talvez vc precise se autenticar
 
+  const [allEvents, setAllEvents] = useState()
+  const { token, setToken } = useContext(AuthContext)
+
   useEffect(() => {
-    console.log('something happens')
-  }, [])
 
-  const [allEvents, setAllEvents] = useState(events)
+    axios.get('http://localhost:8000/main/my-activities', {
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": token
+      }
+    }).then((response) => {
+      if (response.data.auth == false) {
+        return
+      }
+      
+      setAllEvents([response.data.data])
 
-  function handleAddEvent() {
-    setAllEvents([...allEvents, newEvent])
+    })
+
+  }, [token])
+
+
+  const [currentCard, setCurrentCard] = useState({
+    name: "",
+    description: "",
+    beginsdate: "",
+    expiresdate: "",
+    status: ""
+  })
+
+  if (!token) {
+    return (
+      <div className="container d-flex justify-content-center">
+        <span className="mt-5 mb-5">Você precisa <Link href="/signin">se autenticar</Link> para acessar essa página</span>
+      </div>
+    )
   }
 
   return (
@@ -68,12 +102,29 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <SmartCard currentCard="" />
+        <SmartCard currentCard={currentCard} />
         <br />
-        <Calendar onSelectEvent={(e) => console.log(e)} localizer={localizer} events={allEvents}
-          startAccessor="start" endAccessor="end"
+        <Calendar onSelectEvent={(e) => {
+
+          setCurrentCard({
+            name: e.name,
+            description: e.description,
+            beginsdate: e.beginsdate,
+            expiresdate: e.expiresdate,
+            status: e.status
+          })
+
+        }} localizer={localizer} events={allEvents}
+          startAccessor="beginsdate" endAccessor="expiresdate"
+          titleAccessor="name"
           style={{ height: 500, width: "100%", margin: "50px" }}
         />
+        <br />
+        <Link href="/activity/add" className="link">Criar nova atividade</Link>
+        <a className="link" onClick={() => {
+          localStorage.removeItem('token')
+          setToken()
+        }}>Deslogar</a>
       </main>
 
     </motion.div>

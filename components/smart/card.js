@@ -1,7 +1,7 @@
 
 export default function SmartCard(props) {
 
-    if (!props.currentCard) {
+    if (!props.currentCard.name) {
         return (
             <div className="card w-100">
                 <div className="card-body d-flex justify-content-center">
@@ -16,10 +16,10 @@ export default function SmartCard(props) {
     return (
         <div className="card w-100">
             <div className="card-body">
-                <h5 className="card-title">Visitar parentes</h5>
-                <h6 className="card-subtitle mb-2 text-muted">Iniciado em 02/02/2022</h6>
-                <h6 className="card-subtitle mb-2 text-muted">Encerrado em 08/02/2022</h6>
-                <p className="card-text">Nessa semana eu irei visitar meus pais, que não vejo faz muito tempo.</p>
+                <h5 className="card-title">{props.currentCard.name}</h5>
+                <h6 className="card-subtitle mb-2 text-muted">Iniciado em {props.currentCard.beginsdate}</h6>
+                <h6 className="card-subtitle mb-2 text-muted">Encerrado em {props.currentCard.expiresdate}</h6>
+                <p className="card-text">{props.currentCard.description}</p>
                 <a href="#" className="card-link">Editar</a>
             </div>
         </div>

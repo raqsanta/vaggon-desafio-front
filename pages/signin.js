@@ -2,10 +2,14 @@ import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import axios from 'axios'
+import AuthContext from '../context'
+import Router from 'next/router'
 
 export default function SignIn() {
+
+    const {token, setToken} = useContext(AuthContext)
 
     const [loginData, setLoginData] = useState({
         username: "",
@@ -19,12 +23,16 @@ export default function SignIn() {
             const data = response.data
 
             if(data.auth == true){
-                localStorage.setItem("token",data.token)
+                setToken(data.token)
             }else{
                 alert('Alguns de seus dados podem estar incorretos. Tente novamente.')
             }
         })
 
+    }
+
+    if(token){
+        Router.push('/')
     }
 
     return (

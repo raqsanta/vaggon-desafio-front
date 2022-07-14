@@ -28,7 +28,7 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <Calendar className={styles.main_calendar + " shadow"} locale="pt-BR" onChange={onChange} value={value} />
+        <Calendar selectRange={true} className={styles.main_calendar + " shadow"} locale="pt-BR" onChange={onChange} onClickDay={(e)=>{console.log(e)}} />
       </main>
 
     </motion.div>

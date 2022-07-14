@@ -10,7 +10,7 @@ export default function SignIn() {
             initial={{ width: 0 }}
             animate={{ width: '100%' }}
             exit={{ width: 0 }}
-            classNameName={styles.container}>
+            className={styles.container}>
             <Head>
                 <title>Calendário MC2</title>
                 <link rel="icon" href="/favicon.ico" />
@@ -26,11 +26,11 @@ export default function SignIn() {
                 <form className="mt-3">
                     <div className="form-floating mb-3">
                         <input type="username" className="form-control" id="username" placeholder="name@example.com" />
-                        <label for="username">Username</label>
+                        <label htmlFor="username">Username</label>
                     </div>
                     <div className="form-floating">
                         <input type="password" className="form-control" id="password" placeholder="Password" />
-                        <label for="password">Password</label>
+                        <label htmlFor="password">Password</label>
                     </div>
                     <button className="btn btn-primary w-100 mt-3">
                         Registrar

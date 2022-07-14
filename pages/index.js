@@ -10,7 +10,8 @@ import { motion } from 'framer-motion'
 import DatePicker from 'react-datepicker'
 import "react-datepicker/dist/react-datepicker.css"
 import "react-big-calendar/lib/css/react-big-calendar.css"
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import SmartCard from '../components/smart/card'
 
 const locales = {
   "pt-BR": require("date-fns/locale/pt-BR")
@@ -41,9 +42,9 @@ const events = [
 export default function Home() {
   //talvez vc precise se autenticar
 
-  const [newEvent, setNewEvent] = useState({
-    title: "", allDay: true, start: "", end: ""
-  })
+  useEffect(() => {
+    console.log('something happens')
+  }, [])
 
   const [allEvents, setAllEvents] = useState(events)
 
@@ -67,20 +68,9 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        
-        <center>
-        <h5>Add a new date</h5>
+        <SmartCard currentCard="" />
         <br />
-        <input type="text" placeholder="Add title" value={newEvent.title} onChange={(e)=>setNewEvent({...newEvent, title: e.target.value})} />
-        <DatePicker placeholderText="Start date" selected={newEvent.start} onChange={(start)=>setNewEvent({...newEvent, start})} />
-        <br />
-        <DatePicker placeholderText="End date" selected={newEvent.end} onChange={(end)=>setNewEvent({...newEvent, end})} />
-        <br />
-        <button className="mb-5" onClick={handleAddEvent}>Finalizar</button>
-        </center>
-
-        <br />
-        <Calendar localizer={localizer} events={allEvents}
+        <Calendar onSelectEvent={(e) => console.log(e)} localizer={localizer} events={allEvents}
           startAccessor="start" endAccessor="end"
           style={{ height: 500, width: "100%", margin: "50px" }}
         />

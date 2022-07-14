@@ -2,15 +2,37 @@ import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import { useState } from 'react'
+import axios from 'axios'
 
 export default function SignIn() {
+
+    const [loginData, setLoginData] = useState({
+        username: "",
+        password: ""
+    })
+
+    function submitAuth(e){
+        e.preventDefault()
+        axios.post('http://localhost:8000/auth', loginData)
+        .then((response)=>{
+            const data = response.data
+
+            if(data.auth == true){
+                localStorage.setItem("token",data.token)
+            }else{
+                alert('Alguns de seus dados podem estar incorretos. Tente novamente.')
+            }
+        })
+
+    }
 
     return (
         <motion.div
             initial={{ width: 0 }}
             animate={{ width: '100%' }}
             exit={{ width: 0 }}
-            classNameName={styles.container}>
+            className={styles.container}>
             <Head>
                 <title>Calendário MC2</title>
                 <link rel="icon" href="/favicon.ico" />
@@ -25,14 +47,14 @@ export default function SignIn() {
                 <br />
                 <form className="mt-3">
                     <div className="form-floating mb-3">
-                        <input type="username" className="form-control" id="username" placeholder="name@example.com" />
-                        <label for="username">Username</label>
+                        <input type="username" onChange={(username)=>setLoginData({...loginData, username: username.target.value})} className="form-control" id="username" placeholder="name@example.com" />
+                        <label htmlFor="username">Username</label>
                     </div>
                     <div className="form-floating">
-                        <input type="password" className="form-control" id="password" placeholder="Password" />
-                        <label for="password">Password</label>
+                        <input type="password" onChange={(password)=>setLoginData({...loginData, password: password.target.value})} className="form-control" id="password" placeholder="Password" />
+                        <label htmlFor="password">Password</label>
                     </div>
-                    <button className="btn btn-primary w-100 mt-3">
+                    <button onClick={submitAuth} className="btn btn-primary w-100 mt-3">
                         Entrar
                     </button>
                     <Link href="/signup">

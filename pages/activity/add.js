@@ -8,6 +8,7 @@ import { useContext, useState } from 'react'
 import axios from 'axios'
 import AuthContext from '../../context'
 import Link from 'next/link'
+import Router from 'next/router'
 
 export default function Add() {
 
@@ -34,6 +35,8 @@ export default function Add() {
             if (response.data.auth == false) {
                 return
             }
+
+            Router.push('/')
 
         }).catch((err) => {
             console.log(err)

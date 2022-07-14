@@ -8,7 +8,7 @@ import { useContext, useEffect, useState } from 'react'
 import axios from 'axios'
 import AuthContext from '../../../context'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import Router, { useRouter } from 'next/router'
 
 export default function Edit() {
 
@@ -80,6 +80,8 @@ export default function Edit() {
              if (response.data.auth == false) {
                  return
              }
+
+             Router.push('/')
 
          }).catch((err) => {
              console.log(err)

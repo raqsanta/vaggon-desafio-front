@@ -135,7 +135,7 @@ export default function Edit() {
                     <br />
                     <div className="form-floating mb-3">
                         <select value={status} onChange={changeStatus} className="form-select" id="status" aria-label="Floating select">
-                            <option selected value="Pending">Pending</option>
+                            <option value="Pending">Pending</option>
                             <option value="Published">Published</option>
                             <option value="Cancelled">Cancelled</option>
                         </select>

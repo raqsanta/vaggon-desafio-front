@@ -19,14 +19,13 @@ export default function Add() {
         description: "",
         beginsdate: "",
         expiresdate: "",
-        status: status,
     })
 
     function submitForm() {
 
         console.log(event)
 
-        axios.post('http://localhost:8000/main/create-activity', event, {
+        axios.post('http://localhost:8000/main/create-activity', {...event, status}, {
             headers: {
                 "Content-Type": "application/json",
                 "x-access-token": token
@@ -43,7 +42,6 @@ export default function Add() {
     }
 
     function changeStatus(e) {
-        console.log(e.target.value)
         setStatus(e.target.value);
     }
 
@@ -90,7 +88,7 @@ export default function Add() {
                     <br />
                     <div className="form-floating mb-3">
                         <select value={status} onChange={changeStatus} className="form-select" id="status" aria-label="Floating select">
-                            <option selected value="Pending">Pending</option>
+                            <option value="Pending">Pending</option>
                             <option value="Published">Published</option>
                             <option value="Cancelled">Cancelled</option>
                         </select>
